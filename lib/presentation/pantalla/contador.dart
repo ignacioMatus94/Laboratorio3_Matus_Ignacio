@@ -77,7 +77,7 @@ class _ContadorPantallaState extends State<Contador> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Selecciona un idioma'),
+          title: Text('Selecciona un idioma:'),
           content: SingleChildScrollView(
             child: Column(
               children: [
