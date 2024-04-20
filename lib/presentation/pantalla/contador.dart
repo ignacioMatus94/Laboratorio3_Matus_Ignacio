@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class Contador extends StatefulWidget {
   const Contador({Key? key}) : super(key: key);
-
   @override
   State<Contador> createState() => _ContadorPantallaState();
 }
@@ -11,6 +11,8 @@ class Contador extends StatefulWidget {
 class _ContadorPantallaState extends State<Contador> {
   int _clickContador = 0;
   Color _backgroundColor = Colors.blue;
+  String iconoSonido = 'assets/iconoSonido.svg';
+
 
   // Mapa de idiomas con el título de la aplicación
   Map<String, String> _titulos = {
@@ -46,7 +48,9 @@ class _ContadorPantallaState extends State<Contador> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Selecciona un color'),
+          title: Text('Selecciona un color',
+          style: TextStyle(fontFamily: 'Jersey'),
+          ),
           content: SingleChildScrollView(
             child: ColorPicker(
               pickerColor: _backgroundColor,
@@ -64,7 +68,8 @@ class _ContadorPantallaState extends State<Contador> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('Cerrar'),
+              child: Text('Cerrar',
+              style: TextStyle(fontFamily: 'Jersey'),),
             ),
           ],
         );
@@ -77,12 +82,14 @@ class _ContadorPantallaState extends State<Contador> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Selecciona un idioma:'),
+          title: Text('Selecciona un idioma:',
+          style: TextStyle(fontFamily: 'Jersey')
+          ),
           content: SingleChildScrollView(
             child: Column(
               children: [
                 ListTile(
-                  title: Text('Español'),
+                  title: Text('Español',style: TextStyle(fontFamily: 'Jersey')),
                   onTap: () {
                     setState(() {
                       _idiomaActual = 'es';
@@ -169,6 +176,12 @@ class _ContadorPantallaState extends State<Contador> {
           onPressed: _cambiarIdioma,
           icon: Icon(Icons.language),
         ),
+        SvgPicture.asset(iconoSonido,
+        width: 50,
+        height: 30,
+        alignment: Alignment.bottomCenter,
+        color: Colors.amber)
+          
       ],
     );
   }
