@@ -1,70 +1,50 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
 class Contador extends StatefulWidget {
-  const Contador({Key? key}) : super(key: key);
-
   @override
-  State<Contador> createState() => _ContadorPantallaState();
+  _ContadorState createState() => _ContadorState();
 }
 
-class _ContadorPantallaState extends State<Contador> {
-  int _clickContador = 0;
-  Color _backgroundColor = Colors.blue;
-
-  // Mapa de idiomas con el título de la aplicación
-  Map<String, String> _titulos = {
-    'es': 'Contador de Clicks', // Título en español
-    'en': 'Click Counter', // Título en inglés
-  };
-
-  // Idioma actual (por defecto: español)
-  String _idiomaActual = 'es';
+class _ContadorState extends State<Contador> {
+  int _counter = 0;
 
   void _incrementarContador() {
     setState(() {
-      _clickContador++;
+      _counter++;
+      if (_counter == 10) {
+        _mostrarResultado('Perdiste');
+      } else if (_counter == 15) {
+        _mostrarResultado('Ganaste');
+      }
     });
   }
 
   void _decrementarContador() {
     setState(() {
-      if (_clickContador > 0) {
-        _clickContador--;
+      if (_counter > 0) {
+        _counter--;
       }
     });
   }
 
-  void _reiniciarContador() {
+  void _resetearContador() {
     setState(() {
-      _clickContador = 0;
+      _counter = 0;
     });
   }
 
-  void _mostrarSelectorColor() {
+  void _mostrarResultado(String mensaje) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Selecciona un color'),
-          content: SingleChildScrollView(
-            child: ColorPicker(
-              pickerColor: _backgroundColor,
-              onColorChanged: (color) {
-                setState(() {
-                  _backgroundColor = color;
-                });
-              },
-              showLabel: true,
-              pickerAreaHeightPercent: 0.8,
-            ),
-          ),
+          title: Text(mensaje),
           actions: <Widget>[
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('Cerrar'),
+              child: Text('OK'),
             ),
           ],
         );
@@ -72,104 +52,42 @@ class _ContadorPantallaState extends State<Contador> {
     );
   }
 
-  void _cambiarIdioma() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Selecciona un idioma:'),
-          content: SingleChildScrollView(
-            child: Column(
-              children: [
-                ListTile(
-                  title: Text('Español'),
-                  onTap: () {
-                    setState(() {
-                      _idiomaActual = 'es';
-                    });
-                    Navigator.of(context).pop();
-                  },
-                ),
-                ListTile(
-                  title: Text('Inglés'),
-                  onTap: () {
-                    setState(() {
-                      _idiomaActual = 'en';
-                    });
-                    Navigator.of(context).pop();
-                  },
-                ),
-                // Agrega más idiomas aquí según sea necesario
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: barraApp(),
-      body: centerLetras(),
-      floatingActionButton: filaContador(),
-    );
-  }
-
-  Row filaContador() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-        FloatingActionButton(
-          onPressed: _decrementarContador,
-          child: Icon(Icons.remove),
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text(
+              'Contador:',
+            ),
+            Text(
+              '$_counter',
+              style: Theme.of(context).textTheme.headline4,
+            ),
+            SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                IconButton(
+                  onPressed: _incrementarContador,
+                  icon: Icon(Icons.add),
+                ),
+                IconButton(
+                  onPressed: _decrementarContador,
+                  icon: Icon(Icons.remove),
+                ),
+                IconButton(
+                  onPressed: _resetearContador,
+                  icon: Icon(Icons.refresh),
+                ),
+              ],
+            ),
+          ],
         ),
-        SizedBox(width: 10),
-        FloatingActionButton(
-          onPressed: _incrementarContador,
-          child: Icon(Icons.add),
-        ),
-      ],
-    );
-  }
-
-  Center centerLetras() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            '$_clickContador',
-            style: TextStyle(fontSize: 160, fontWeight: FontWeight.w100),
-          ),
-          Text(
-            'Clicks',
-            style: TextStyle(fontSize: 25),
-          ),
-        ],
       ),
-    );
-  }
-
-  AppBar barraApp() {
-    return AppBar(
-      title: Text(_titulos[_idiomaActual]!),
-      backgroundColor: _backgroundColor,
-      actions: [
-        IconButton(
-          onPressed: _reiniciarContador,
-          icon: Icon(Icons.refresh),
-        ),
-        IconButton(
-          onPressed: _mostrarSelectorColor,
-          icon: Icon(Icons.color_lens),
-        ),
-        IconButton(
-          onPressed: _cambiarIdioma,
-          icon: Icon(Icons.language),
-        ),
-      ],
     );
   }
 }
