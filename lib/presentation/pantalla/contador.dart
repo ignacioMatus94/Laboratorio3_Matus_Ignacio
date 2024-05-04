@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:hola/presentation/pantalla/Lista.dart';
+import 'detalles.dart';
+import 'package:flutter_svg_icons/flutter_svg_icons.dart';
+
 
 class Contador extends StatefulWidget {
   const Contador({Key? key}) : super(key: key);
@@ -12,27 +16,72 @@ class _ContadorPantallaState extends State<Contador> {
   int _clickContador = 0;
   Color _backgroundColor = Colors.blue;
 
-  // Mapa de idiomas con el título de la aplicación
-  Map<String, String> _titulos = {
-    'es': 'Contador de Clicks', // Título en español
-    'en': 'Click Counter', // Título en inglés
+  final Map<String, String> _titulos = {
+    'es': 'Contador de Clicks',
+    'en': 'Click Counter',
   };
 
-  // Idioma actual (por defecto: español)
   String _idiomaActual = 'es';
 
   void _incrementarContador() {
     setState(() {
-      _clickContador++;
+      if (_clickContador < 15) {
+        _clickContador++;
+        if (_clickContador == 15) {
+          _mostrarMensajeTriunfo();
+        }
+        if (_clickContador == 10) {
+          _mostrarMensajeDerrota();
+        }
+      }
     });
+  }
+
+  void _mostrarMensajeTriunfo() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('¡Triunfaste!'),
+        content: const Text('Has alcanzado el máximo de 15 clics.'),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
   }
 
   void _decrementarContador() {
     setState(() {
       if (_clickContador > 0) {
         _clickContador--;
+        if (_clickContador == 10) {
+          _mostrarMensajeDerrota();
+        }
       }
     });
+  }
+
+  void _mostrarMensajeDerrota() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('¡Derrota!'),
+        content: const Text('10 es perder'),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
   }
 
   void _reiniciarContador() {
@@ -46,7 +95,7 @@ class _ContadorPantallaState extends State<Contador> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Selecciona un color'),
+          title: const Text('Selecciona un color'),
           content: SingleChildScrollView(
             child: ColorPicker(
               pickerColor: _backgroundColor,
@@ -64,7 +113,7 @@ class _ContadorPantallaState extends State<Contador> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('Cerrar'),
+              child: const Text('Cerrar'),
             ),
           ],
         );
@@ -77,12 +126,12 @@ class _ContadorPantallaState extends State<Contador> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Selecciona un idioma:'),
+          title: const Text('Selecciona un idioma:'),
           content: SingleChildScrollView(
             child: Column(
               children: [
                 ListTile(
-                  title: Text('Español'),
+                  title: const Text('Español'),
                   onTap: () {
                     setState(() {
                       _idiomaActual = 'es';
@@ -91,7 +140,7 @@ class _ContadorPantallaState extends State<Contador> {
                   },
                 ),
                 ListTile(
-                  title: Text('Inglés'),
+                  title: const Text('Inglés'),
                   onTap: () {
                     setState(() {
                       _idiomaActual = 'en';
@@ -99,7 +148,6 @@ class _ContadorPantallaState extends State<Contador> {
                     Navigator.of(context).pop();
                   },
                 ),
-                // Agrega más idiomas aquí según sea necesario
               ],
             ),
           ),
@@ -108,42 +156,51 @@ class _ContadorPantallaState extends State<Contador> {
     );
   }
 
+  void _cambiarPagina() {
+    Navigator.push(context, MaterialPageRoute(builder: (context) => Lista()));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => Detalles2()));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: barraApp(),
-      body: centerLetras(),
-      floatingActionButton: filaContador(),
+      appBar: _buildAppBar(),
+      body: _buildBody(),
+      floatingActionButton: _buildFloatingActionButton(),
     );
   }
 
-  Row filaContador() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-        FloatingActionButton(
-          onPressed: _decrementarContador,
-          child: Icon(Icons.remove),
+  AppBar _buildAppBar() {
+    return AppBar(
+      title: Text(_titulos[_idiomaActual]!),
+      backgroundColor: _backgroundColor,
+      actions: [
+        IconButton(
+          onPressed: _reiniciarContador,
+          icon: const Icon(Icons.refresh),
         ),
-        SizedBox(width: 10),
-        FloatingActionButton(
-          onPressed: _incrementarContador,
-          child: Icon(Icons.add),
+        IconButton(
+          onPressed: _mostrarSelectorColor,
+          icon: const Icon(Icons.color_lens),
+        ),
+        IconButton(
+          onPressed: _cambiarIdioma,
+          icon: const Icon(Icons.language),
         ),
       ],
     );
   }
 
-  Center centerLetras() {
+  Widget _buildBody() {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
             '$_clickContador',
-            style: TextStyle(fontSize: 160, fontWeight: FontWeight.w100),
+            style: const TextStyle(fontSize: 160, fontWeight: FontWeight.w100),
           ),
-          Text(
+          const Text(
             'Clicks',
             style: TextStyle(fontSize: 25),
           ),
@@ -152,24 +209,38 @@ class _ContadorPantallaState extends State<Contador> {
     );
   }
 
-  AppBar barraApp() {
-    return AppBar(
-      title: Text(_titulos[_idiomaActual]!),
-      backgroundColor: _backgroundColor,
-      actions: [
-        IconButton(
-          onPressed: _reiniciarContador,
-          icon: Icon(Icons.refresh),
+  Widget _buildFloatingActionButton() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        FloatingActionButton(
+          onPressed: _decrementarContador,
+          child: const Icon(Icons.remove),
         ),
-        IconButton(
-          onPressed: _mostrarSelectorColor,
-          icon: Icon(Icons.color_lens),
+        const SizedBox(width: 10),
+        FloatingActionButton(
+          onPressed: _incrementarContador,
+          child: const Icon(Icons.add),
         ),
-        IconButton(
-          onPressed: _cambiarIdioma,
-          icon: Icon(Icons.language),
+        
+        FloatingActionButton(
+          onPressed: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context) => Lista()));
+          },
+          child: const Icon(Icons.next_plan),
         ),
+        FloatingActionButton(
+          onPressed: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context) => Detalles2()));
+          },
+          child: const Icon(Icons.navigate_next_rounded),
+        ),
+   
       ],
     );
   }
+}
+
+void main() {
+  runApp(const Contador());
 }
