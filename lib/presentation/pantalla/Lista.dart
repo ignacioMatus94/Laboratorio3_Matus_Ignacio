@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hola/presentation/pantalla/contador.dart';
+import 'contador.dart';
+import 'Lista.dart';
 
 class Lista extends StatelessWidget {
   @override
@@ -18,54 +20,82 @@ class Lista extends StatelessWidget {
         body: ListView(
           children: [
             ListTile(
-              title: const Text('Ir a Contador'),
+              title: Text('Item 1'),
               onTap: () {
-                _cambiarPagina(context, Contador());
+                _cambiarPagina(context);
               },
             ),
             ListTile(
-              title: const Text('Ir a Detalle'),
+              title: Text('Item 2'),
               onTap: () {
-                Navigator.of(context).pop(); // Cerrar la pantalla actual
+                _cambiarPagina(context);
               },
             ),
           ],
         ),
-        floatingActionButton: _buildFloatingActionButton(context),
+        floatingActionButton: filaContador(context),
       ),
     );
   }
 
-  Widget _buildFloatingActionButton(BuildContext context) {
-    return Stack(
+  Widget filaContador(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        Positioned(
-          bottom: 16.0,
-          right: 16.0,
-          child: FloatingActionButton(
-            onPressed: () {
-              _cambiarPagina(context, Contador());
-            },
-            child: Icon(Icons.next_plan),
-          ),
-        ),
-        Positioned(
-          bottom: 16.0,
-          right: 72.0,
-          child: FloatingActionButton(
-            onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => Lista()));
-            },
-            child: Icon(Icons.navigate_next_rounded),
-          ),
+       
+        FloatingActionButton(
+          onPressed: () {
+            _cambiarPagina(context);
+          },
+          child: Icon(Icons.next_plan),
         ),
       ],
     );
   }
 }
 
-void _cambiarPagina(BuildContext context, Widget page) {
-  Navigator.push(context, MaterialPageRoute(builder: (context) => page));
+class Detalles extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.black87,
+          leading: IconButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            icon: Icon(Icons.arrow_back),
+          ),
+        ),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              FloatingActionButton(
+                onPressed: () {
+                  _cambiarPagina(context);
+                },
+                child: Icon(Icons.next_plan),
+              ),
+              SizedBox(height: 10),
+              FloatingActionButton(
+                onPressed: () {
+                  _cambiarPagina(context);
+                },
+                child: Icon(Icons.navigate_next_rounded),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+void _cambiarPagina(BuildContext context) {
+  Navigator.push(context, MaterialPageRoute(builder: (context) => Lista()));
+  Navigator.push(context, MaterialPageRoute(builder: (context) => Detalles()));
 }
 
 void main() {
